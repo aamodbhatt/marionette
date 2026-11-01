@@ -1,0 +1,16 @@
+{
+  "fvu": 0.008692099157722642,
+  "median_token_fvu": 0.3611889392266443,
+  "fvu_without_top1pct_norm_tokens": 0.35899427570735915,
+  "top1pct_norm_tokens_share_of_variance": 0.9761633244288508,
+  "l0": 43.53015687120535,
+  "dead_fraction_heldout": 0.2584228515625,
+  "dead_fraction_training": 0.0,
+  "ce_clean": 2.7279388643801212,
+  "ce_sae": 3.1327747255563736,
+  "ce_zero_ablation": 14.07437750697136,
+  "ce_delta_nats": 0.40483586117625237,
+  "ce_loss_recovered": 0.9643204468002307,
+  "eval_tokens": 64894,
+  "eval_contexts": 256
+}
