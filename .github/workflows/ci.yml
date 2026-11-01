@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      UV_PYTHON: "3.12"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      # The lockfile pins the CUDA build of torch; CI installs every locked dependency except
+      # torch (and its CUDA wheels), then the CPU build of the same torch version.
+      - name: Install dependencies (CPU torch)
+        run: |
+          uv venv
+          uv export --frozen --no-hashes --no-emit-project --all-groups \
+            | grep -v -E '^(torch|triton|nvidia-|cuda-)' > requirements-ci.txt
+          uv pip install -r requirements-ci.txt
+          uv pip install "torch==2.14.1" --index-url https://download.pytorch.org/whl/cpu
+          uv pip install --no-deps -e .
+      - name: Lint
+        run: |
+          uv run --no-sync ruff check src tests scripts
+          uv run --no-sync ruff format --check src tests scripts
+      - name: Type-check
+        run: uv run --no-sync mypy
+      - name: Test
+        run: uv run --no-sync pytest -q
