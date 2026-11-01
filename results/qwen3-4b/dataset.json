@@ -1,0 +1,65 @@
+{
+  "datasets": {
+    "facts": {
+      "total": 600,
+      "kept": 600,
+      "deceptive": 300,
+      "honest": 300
+    },
+    "instructed": {
+      "total": 480,
+      "kept": 312,
+      "deceptive": 75,
+      "honest": 237
+    },
+    "roleplay": {
+      "total": 864,
+      "kept": 688,
+      "deceptive": 308,
+      "honest": 380
+    },
+    "spontaneous": {
+      "total": 432,
+      "kept": 391,
+      "deceptive": 60,
+      "honest": 331
+    },
+    "confession": {
+      "total": 80,
+      "kept": 80,
+      "deceptive": 0,
+      "honest": 80
+    },
+    "fiction": {
+      "total": 80,
+      "kept": 80,
+      "deceptive": 0,
+      "honest": 80
+    },
+    "persona": {
+      "total": 80,
+      "kept": 80,
+      "deceptive": 0,
+      "honest": 80
+    },
+    "benign": {
+      "total": 240,
+      "kept": 240,
+      "deceptive": 0,
+      "honest": 240
+    }
+  },
+  "drop_reasons": {
+    "instructed: lying reply contained the correct answer": 165,
+    "roleplay: reply did not follow its condition": 115,
+    "roleplay: judge unsure or reply unclear": 61,
+    "spontaneous: judge unsure or reply unclear": 41,
+    "instructed: honest reply missed the correct answer": 3
+  },
+  "judge_vs_answer_key": {
+    "n": 312,
+    "accuracy": 0.9615384615384616
+  },
+  "spontaneous_lie_rate": 0.1534526854219949,
+  "kept_total": 2471
+}
