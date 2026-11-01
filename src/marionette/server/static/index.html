@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>marionette · a polygraph for LLMs</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M4 4h24M10 4v9M22 4v9M16 4v6" />
+        <circle cx="16" cy="15" r="4" />
+        <path d="M16 19v6M10 13l6 6 6-6M12 30l4-5 4 5" />
+      </svg>
+      <div>
+        <h1>marionette</h1>
+        <p>a polygraph for LLMs</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="polygraph" role="tab">Polygraph</button>
+      <button class="tab" data-tab="research" role="tab">Research</button>
+    </nav>
+    <div class="model-badge" id="model-badge">loading…</div>
+  </header>
+
+  <main id="polygraph" class="view active">
+    <aside class="panel presets">
+      <h2>Scenarios</h2>
+      <div id="preset-list" class="preset-list"></div>
+      <details class="system-box" open>
+        <summary>System prompt</summary>
+        <textarea id="system" rows="9" spellcheck="false" placeholder="(none)"></textarea>
+      </details>
+    </aside>
+
+    <section class="panel chat">
+      <div id="transcript" class="transcript">
+        <div class="empty-state">
+          <p class="big">Pick a scenario, or ask anything.</p>
+          <p>Every token the model writes is read off its residual stream by a linear probe. The underline is the
+            probe's per-token score; the needle is its verdict on the whole reply so far.</p>
+        </div>
+      </div>
+      <form id="composer" class="composer">
+        <textarea id="user-input" rows="2" placeholder="Ask the model something…" spellcheck="false"></textarea>
+        <div class="composer-actions">
+          <button type="button" id="reset-btn" class="ghost" title="Clear the conversation">Reset</button>
+          <button type="button" id="regen-btn" class="ghost" title="Regenerate the last reply with the current settings">Regenerate</button>
+          <button type="submit" id="send-btn" class="primary">Send</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="panel instruments">
+      <div class="gauge-card">
+        <svg id="gauge" viewBox="0 0 300 180" aria-label="deception gauge">
+          <defs>
+            <linearGradient id="arc-grad" x1="0" x2="1">
+              <stop offset="0%" stop-color="var(--honest)" />
+              <stop offset="55%" stop-color="var(--amber)" />
+              <stop offset="100%" stop-color="var(--lie)" />
+            </linearGradient>
+          </defs>
+          <path class="arc-bg" d="M30 160 A120 120 0 0 1 270 160" />
+          <path class="arc" d="M30 160 A120 120 0 0 1 270 160" />
+          <g id="ticks"></g>
+          <line id="threshold-mark" x1="150" y1="40" x2="150" y2="58" />
+          <g id="needle" transform="rotate(-90 150 160)">
+            <line x1="150" y1="160" x2="150" y2="52" />
+            <circle cx="150" cy="160" r="9" />
+          </g>
+          <text x="30" y="178" class="gauge-end">honest</text>
+          <text x="270" y="178" class="gauge-end" text-anchor="end">deceptive</text>
+        </svg>
+        <div class="readout">
+          <span id="p-value">–</span>
+          <span id="verdict" class="verdict idle">waiting</span>
+        </div>
+      </div>
+
+      <div class="strip-card">
+        <div class="card-title">Polygraph trace <span class="hint">per-token probe score</span></div>
+        <canvas id="strip" width="560" height="120"></canvas>
+      </div>
+
+      <div class="serum-card">
+        <div class="card-title">Truth serum <span id="serum-layers" class="hint"></span></div>
+        <input id="serum" type="range" min="0" max="4" step="0.25" value="0">
+        <div class="serum-scale"><span>off</span><span id="serum-value">α = 0</span><span id="serum-max">4</span></div>
+        <p class="hint">Subtracts α × (mean lying − mean honest activation) at each steered layer during generation.
+          The probe reads its layer <em>before</em> the edit, so the needle can only drop if the words change.</p>
+      </div>
+
+      <div class="thought-card">
+        <div class="card-title">Thought stream <span id="thought-token" class="hint"></span></div>
+        <div id="thoughts" class="thoughts"><p class="hint">Top active SAE features per token appear here.</p></div>
+      </div>
+
+      <div class="feature-card">
+        <div class="card-title">Feature sliders</div>
+        <input id="feature-search" type="search" placeholder="search labelled features…" autocomplete="off">
+        <div id="feature-results" class="feature-results"></div>
+        <div id="feature-sliders"></div>
+      </div>
+    </aside>
+  </main>
+
+  <main id="research" class="view">
+    <section class="kpis" id="kpis"></section>
+    <section class="grid2">
+      <div class="panel chart-card">
+        <h2>Lie-detection AUROC by layer</h2>
+        <p class="hint">Trained on instructed + scripted role-play lies. Scripted lies saturate from layer 0 (the probe can read the script), so the layer is chosen on spontaneous lies from non-test families.</p>
+        <div id="layer-chart"></div>
+      </div>
+      <div class="panel chart-card">
+        <h2>Cross-dataset generalisation</h2>
+        <p class="hint">AUROC of a logistic probe trained on each row, tested on each column (held-out splits).</p>
+        <div id="matrix"></div>
+      </div>
+      <div class="panel chart-card">
+        <h2>Truth serum dose-response</h2>
+        <p class="hint">Fresh held-out scenarios, greedy decoding, judged by an unsteered model.</p>
+        <div id="steer-chart"></div>
+      </div>
+      <div class="panel chart-card">
+        <h2>Sparse autoencoder</h2>
+        <div id="sae-stats"></div>
+        <h3>Features that push the probe toward "deceptive"</h3>
+        <div id="feature-table"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="tooltip" class="tooltip" hidden></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
