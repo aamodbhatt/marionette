@@ -1,0 +1,40 @@
+# Main profile: Qwen3-4B on one A40 (bf16, ~8 GB of weights).
+run_name = "qwen3-4b"
+seed = 0
+
+[model]
+name = "Qwen/Qwen3-4B"
+
+[data]
+dir = "data/qwen3-4b"
+judge_model = "Qwen/Qwen3-8B"
+scenarios_per_family = 24
+spontaneous_per_family = 24
+instructed_questions = 240
+fact_statements = 600
+controls_per_kind = 80
+benign_prompts = 240
+batch_size = 64
+
+[probes]
+val_families = ["landlord", "insurance_claim", "pet_breeder"]
+out_dir = "results/qwen3-4b"
+weights_dir = "weights/qwen3-4b"
+
+[steering]
+band = 4
+alphas = [0.0, 0.5, 1.0, 1.5, 2.0, 3.0]
+eval_scenarios = 96
+eval_questions = 96
+
+[sae]
+n_latents = 16384
+k = 64
+train_tokens = 8_000_000
+dir = "artifacts/qwen3-4b/sae"
+
+[autointerp]
+n_features = 300
+
+[serve]
+port = 8096

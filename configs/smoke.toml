@@ -1,0 +1,47 @@
+# Tiny end-to-end smoke test of every stage (minutes, not hours).
+run_name = "smoke"
+seed = 0
+
+[model]
+name = "Qwen/Qwen3-4B"
+
+[data]
+dir = "data/smoke"
+judge_model = "Qwen/Qwen3-8B"
+scenarios_per_family = 4
+spontaneous_per_family = 1
+instructed_questions = 16
+fact_statements = 40
+controls_per_kind = 4
+benign_prompts = 16
+max_new_tokens = 64
+batch_size = 32
+
+[probes]
+val_families = ["landlord", "insurance_claim", "pet_breeder"]
+l2_grid = [0.01, 0.1]
+out_dir = "runs/smoke/results"
+weights_dir = "runs/smoke/weights"
+
+[steering]
+alphas = [0.0, 2.0]
+eval_scenarios = 8
+eval_questions = 8
+max_new_tokens = 48
+
+[sae]
+n_latents = 2048
+k = 32
+train_tokens = 400_000
+heldout_tokens = 65_536
+buffer_tokens = 65_536
+dead_tokens = 100_000
+warmup_steps = 10
+log_every = 10
+dir = "runs/smoke/sae"
+
+[autointerp]
+n_features = 8
+n_deception = 4
+collect_contexts = 64
+batch_size = 8

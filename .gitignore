@@ -1,0 +1,26 @@
+# environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+node_modules/
+requirements-ci.txt
+
+# pipeline outputs: data, runs and checkpoints (large; rebuilt by the pipeline)
+data/
+runs/
+artifacts/
+target/
+dist/
+build/
+.jobs/
+.cache/
+*.ckpt
+*.pt
+*.log
+
+# internal working notes
+/RESUME.md

@@ -1,0 +1,31 @@
+# Laptop profile: Qwen3-1.7B (about 3.4 GB in bf16; runs on a 6 GB GPU or, slowly, on CPU).
+# Its probes must be trained on its own activations: build the data and probes on a GPU machine
+#   uv run marionette data -c configs/laptop.toml      (generator 1.7B, judge 8B, one at a time)
+#   uv run marionette capture -c configs/laptop.toml
+#   uv run marionette probes -c configs/laptop.toml
+# then copy weights/qwen3-1.7b/ to the laptop and run `marionette serve -c configs/laptop.toml`.
+# There is no SAE in this profile, so the thought stream is switched off.
+run_name = "qwen3-1.7b"
+seed = 0
+device = "auto"
+
+[model]
+name = "Qwen/Qwen3-1.7B"
+dtype = "bfloat16"
+
+[data]
+dir = "data/qwen3-1.7b"
+judge_model = "Qwen/Qwen3-8B"
+batch_size = 64
+
+[probes]
+val_families = ["landlord", "insurance_claim", "pet_breeder"]
+out_dir = "results/qwen3-1.7b"
+weights_dir = "weights/qwen3-1.7b"
+
+[sae]
+dir = "artifacts/qwen3-1.7b/sae"
+
+[serve]
+port = 8096
+max_new_tokens = 128
