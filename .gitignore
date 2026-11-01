@@ -10,14 +10,14 @@ node_modules/
 requirements-ci.txt
 
 # pipeline outputs: data, runs and checkpoints (large; rebuilt by the pipeline)
-data/
-runs/
-artifacts/
-target/
-dist/
-build/
-.jobs/
-.cache/
+/data/
+/runs/
+/artifacts/
+/target/
+/dist/
+/build/
+/.jobs/
+/.cache/
 *.ckpt
 *.pt
 *.log
