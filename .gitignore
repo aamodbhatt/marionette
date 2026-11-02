@@ -21,6 +21,3 @@ requirements-ci.txt
 *.ckpt
 *.pt
 *.log
-
-# internal working notes
-/RESUME.md

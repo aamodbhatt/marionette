@@ -284,8 +284,12 @@ scripts/             pipeline, demo capture, plots
 | SAE web text | [HuggingFaceFW/fineweb-edu](https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu) (`sample/10BT`) | ODC-By 1.0 |
 | Models | [Qwen/Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B), [Qwen/Qwen3-8B](https://huggingface.co/Qwen/Qwen3-8B) (judge) | Apache-2.0 |
 
-Generated replies are model outputs from the Apache-2.0 Qwen3 models; the datasets are rebuilt
-by `marionette data`, not shipped.
+Generated replies are model outputs from the Apache-2.0 Qwen3 models. The datasets are rebuilt
+by `marionette data` and `marionette sae tokens`, not shipped. The one exception is
+`weights/qwen3-4b/features.json`, which keeps 900 short top-activation excerpts (three per
+labelled latent) from [FineWeb-Edu](https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu)
+(ODC-By 1.0), [UltraChat](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k) (MIT)
+and this repo's own dialogs.
 
 ## Roadmap
 
